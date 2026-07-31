@@ -1,335 +1,126 @@
-/*==================================================
-        EDUTECH INSTITUTE - SCRIPT.JS
-==================================================*/
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Theme Switcher (Dark/Light Mode)
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
 
-document.addEventListener("DOMContentLoaded", () => {
+    // Apply saved theme on page load regardless of toggle existence
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    htmlElement.setAttribute('data-theme', savedTheme);
 
-    /*=====================================
-        MOBILE MENU
-    =====================================*/
+    if (themeToggle) {
+        const themeIcon = themeToggle.querySelector('i');
+        updateThemeIcon(savedTheme);
 
-    const menuBtn = document.querySelector(".menu-btn");
-    const navbar = document.querySelector(".navbar");
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
 
-    if (menuBtn && navbar) {
-
-        menuBtn.addEventListener("click", () => {
-
-            navbar.classList.toggle("active");
-
-            const icon = menuBtn.querySelector("i");
-
-            if (navbar.classList.contains("active")) {
-                icon.classList.remove("fa-bars");
-                icon.classList.add("fa-times");
+        function updateThemeIcon(theme) {
+            if(theme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
             } else {
-                icon.classList.remove("fa-times");
-                icon.classList.add("fa-bars");
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
             }
-
-        });
-
-    }
-
-    /*=====================================
-        CLOSE MENU AFTER CLICK
-    =====================================*/
-
-    const navLinks = document.querySelectorAll(".navbar a");
-
-    navLinks.forEach(link => {
-
-        link.addEventListener("click", () => {
-
-            if (navbar) {
-
-                navbar.classList.remove("active");
-
-            }
-
-            if (menuBtn) {
-
-                const icon = menuBtn.querySelector("i");
-
-                icon.classList.remove("fa-times");
-                icon.classList.add("fa-bars");
-
-            }
-
-        });
-
-    });
-
-    /*=====================================
-        ESC KEY CLOSE MENU
-    =====================================*/
-
-    document.addEventListener("keydown", (e) => {
-
-        if (e.key === "Escape") {
-
-            navbar.classList.remove("active");
-
-            if (menuBtn) {
-
-                const icon = menuBtn.querySelector("i");
-
-                icon.classList.remove("fa-times");
-                icon.classList.add("fa-bars");
-
-            }
-
         }
+    }
 
-    });
+    // 2. Mobile Navigation Toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
 
-    /*=====================================
-        STICKY HEADER
-    =====================================*/
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = hamburger.querySelector('i');
+            if(navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
 
-    const header = document.querySelector("header");
-
-    window.addEventListener("scroll", () => {
-
-        if (window.scrollY > 80) {
-
-            header.classList.add("sticky");
-
-        } else {
-
-            header.classList.remove("sticky");
-
+    // 3. Scroll Progress Bar
+    window.addEventListener('scroll', () => {
+        const progressBar = document.getElementById('scroll-progress');
+        if (progressBar) {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progressBar.style.width = scrolled + '%';
         }
-
     });
 
-    /*=====================================
-        ACTIVE MENU
-    =====================================*/
-
-    const sections = document.querySelectorAll("section[id]");
-
-    function activeMenu() {
-
-        let scrollY = window.pageYOffset;
-
-        sections.forEach(current => {
-
-            const sectionHeight = current.offsetHeight;
-            const sectionTop = current.offsetTop - 150;
-
-            let sectionId = current.getAttribute("id");
-
-            const navLink = document.querySelector(
-                '.navbar a[href*=' + sectionId + ']'
-            );
-
-            if (!navLink) return;
-
-            if (scrollY > sectionTop &&
-                scrollY <= sectionTop + sectionHeight) {
-
-                navLink.classList.add("active");
-
-            } else {
-
-                navLink.classList.remove("active");
-
-            }
-
-        });
-
-    }
-
-    window.addEventListener("scroll", activeMenu);
-
-    /*=====================================
-        SMOOTH SCROLL
-    =====================================*/
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-
-        anchor.addEventListener("click", function (e) {
-
-            const target = document.querySelector(this.getAttribute("href"));
-
-            if (target) {
-
-                e.preventDefault();
-
-                window.scrollTo({
-
-                    top: target.offsetTop - 80,
-
-                    behavior: "smooth"
-
-                });
-
-            }
-
-        });
-
-    });
-
-    /*=====================================
-        SCROLL TO TOP BUTTON
-    =====================================*/
-
-    const topBtn = document.querySelector(".top-btn");
-
-    if (topBtn) {
-
-        window.addEventListener("scroll", () => {
-
-            if (window.scrollY > 400) {
-
-                topBtn.classList.add("show");
-
-            } else {
-
-                topBtn.classList.remove("show");
-
-            }
-
-        });
-
-        topBtn.addEventListener("click", (e) => {
-
-            e.preventDefault();
-
-            window.scrollTo({
-
-                top: 0,
-
-                behavior: "smooth"
-
-            });
-
-        });
-
-    }
-
-    /*=====================================
-        SCROLL ANIMATION
-    =====================================*/
-
-    const revealElements = document.querySelectorAll(
-
-        ".feature-card, .course-card, .gallery-item, .info-box, .contact-form, .contact-info"
-
-    );
-
-    function reveal() {
-
-        revealElements.forEach(el => {
-
-            const windowHeight = window.innerHeight;
-
-            const revealTop = el.getBoundingClientRect().top;
-
-            if (revealTop < windowHeight - 100) {
-
-                el.style.opacity = "1";
-                el.style.transform = "translateY(0)";
-
-            }
-
-        });
-
-    }
-
-    revealElements.forEach(el => {
-
-        el.style.opacity = "0";
-        el.style.transform = "translateY(40px)";
-        el.style.transition = "all .7s ease";
-
-    });
-
-    reveal();
-
-    window.addEventListener("scroll", reveal);
-
-    /*=====================================
-        CONTACT FORM
-    =====================================*/
-
-    const form = document.querySelector("form");
-
-    if (form) {
-
-        form.addEventListener("submit", function (e) {
-
-            e.preventDefault();
-
-            const requiredFields = form.querySelectorAll(
-
-                "input[required], textarea[required]"
-
-            );
-
-            let valid = true;
-
-            requiredFields.forEach(field => {
-
-                if (field.value.trim() === "") {
-
-                    field.style.border = "2px solid red";
-
-                    valid = false;
-
-                } else {
-
-                    field.style.border = "2px solid green";
-
+    // 4. Scroll Animations (Fade Up)
+    const fadeElements = document.querySelectorAll('.fade-up');
+    if (fadeElements.length > 0) {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if(entry.target.classList.contains('stats')) {
+                        startCounters();
+                    }
+                    observer.unobserve(entry.target);
                 }
-
             });
+        }, observerOptions);
 
-            if (valid) {
-
-                alert("Thank you! Your enquiry has been submitted successfully.");
-
-                form.reset();
-
-                requiredFields.forEach(field => {
-
-                    field.style.border = "";
-
-                });
-
-            } else {
-
-                alert("Please fill all required fields.");
-
-            }
-
-        });
-
+        fadeElements.forEach(el => observer.observe(el));
     }
 
-    /*=====================================
-        IMAGE HOVER EFFECT
-    =====================================*/
+    // 5. Animated Counters
+    let countersStarted = false;
+    function startCounters() {
+        if(countersStarted) return;
+        countersStarted = true;
+        
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200; 
 
-    const galleryImages = document.querySelectorAll(".gallery-item img");
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
 
-    galleryImages.forEach(img => {
-
-        img.addEventListener("mouseenter", () => {
-
-            img.style.transform = "scale(1.08)";
-
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 15);
+                } else {
+                    counter.innerText = target + (counter.getAttribute('data-suffix') || '');
+                }
+            };
+            updateCount();
         });
+    }
 
-        img.addEventListener("mouseleave", () => {
+    // 6. Active Navbar Links
+    const currentPage = window.location.pathname.split("/").pop();
+    const navItems = document.querySelectorAll('.nav-links a');
+    
+    // Clear all existing active classes first
+    navItems.forEach(link => link.classList.remove('active'));
 
-            img.style.transform = "scale(1)";
-
-        });
-
+    navItems.forEach(link => {
+        if(link.getAttribute('href') === currentPage || (currentPage === '' && link.getAttribute('href') === 'index.html')) {
+            link.classList.add('active');
+        }
     });
-
-   
-
 });
