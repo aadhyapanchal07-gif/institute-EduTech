@@ -1,129 +1,149 @@
-/* ==========================================
-   EDUTECH INSTITUTE - SCRIPT.JS
-========================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+// =========================
+// MOBILE MENU
+// =========================
 
-    // ===============================
-    // ELEMENTS
-    // ===============================
+const menuBtn = document.querySelector(".menu-btn");
+const navbar = document.querySelector(".navbar");
 
-    const menuBtn = document.querySelector(".menu-btn");
-    const navbar = document.querySelector(".navbar");
-    const menuIcon = document.querySelector(".menu-btn i");
-    const navLinks = document.querySelectorAll(".navbar a");
-    const header = document.querySelector("header");
+if (menuBtn && navbar) {
 
-    // ===============================
-    // MOBILE MENU
-    // ===============================
+    menuBtn.addEventListener("click", () => {
 
-    if (menuBtn && navbar) {
+        navbar.classList.toggle("active");
 
-        menuBtn.addEventListener("click", function () {
+        const icon = menuBtn.querySelector("i");
 
-            navbar.classList.toggle("active");
+        if (navbar.classList.contains("active")) {
 
-            if (navbar.classList.contains("active")) {
-
-                menuIcon.classList.remove("fa-bars");
-                menuIcon.classList.add("fa-times");
-
-            } else {
-
-                menuIcon.classList.remove("fa-times");
-                menuIcon.classList.add("fa-bars");
-
-            }
-
-        });
-
-    }
-
-    // ===============================
-    // CLOSE MENU AFTER CLICK
-    // ===============================
-
-    navLinks.forEach(function (link) {
-
-        link.addEventListener("click", function () {
-
-            if (window.innerWidth <= 991) {
-
-                navbar.classList.remove("active");
-
-                menuIcon.classList.remove("fa-times");
-                menuIcon.classList.add("fa-bars");
-
-            }
-
-        });
-
-    });
-
-    // ===============================
-    // CLOSE MENU WHEN CLICKING OUTSIDE
-    // ===============================
-
-    document.addEventListener("click", function (e) {
-
-        if (
-            navbar &&
-            menuBtn &&
-            !navbar.contains(e.target) &&
-            !menuBtn.contains(e.target)
-        ) {
-
-            navbar.classList.remove("active");
-
-            if (menuIcon) {
-
-                menuIcon.classList.remove("fa-times");
-                menuIcon.classList.add("fa-bars");
-
-            }
-
-        }
-
-    });
-
-    // ===============================
-    // STICKY HEADER EFFECT
-    // ===============================
-
-    window.addEventListener("scroll", function () {
-
-        if (window.scrollY > 50) {
-
-            header.style.boxShadow = "0 10px 25px rgba(0,0,0,.15)";
-            header.style.background = "#ffffff";
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-times");
 
         } else {
 
-            header.style.boxShadow = "0 5px 15px rgba(0,0,0,.08)";
-            header.style.background = "#ffffff";
+            icon.classList.remove("fa-times");
+            icon.classList.add("fa-bars");
 
         }
 
     });
 
-    // ===============================
-    // ACTIVE MENU LINK
-    // ===============================
+}
 
-    const currentPage = window.location.pathname.split("/").pop();
+// =========================
+// CLOSE MENU AFTER CLICK
+// =========================
 
-    navLinks.forEach(function (link) {
+document.querySelectorAll(".navbar a").forEach(link => {
 
-        const file = link.getAttribute("href");
+    link.addEventListener("click", () => {
 
-        if (file === currentPage || (currentPage === "" && file === "index.html")) {
+        navbar.classList.remove("active");
 
-            navLinks.forEach(function (l) {
+        const icon = menuBtn.querySelector("i");
 
-                l.classList.remove("active");
+        icon.classList.remove("fa-times");
+        icon.classList.add("fa-bars");
+
+    });
+
+});
+
+// =========================
+// STICKY HEADER
+// =========================
+
+const header = document.getElementById("header");
+
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 80) {
+
+        header.classList.add("sticky");
+
+    } else {
+
+        header.classList.remove("sticky");
+
+    }
+
+});
+
+// =========================
+// BACK TO TOP BUTTON
+// =========================
+
+const topBtn = document.querySelector(".top-btn");
+
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 400) {
+
+        topBtn.classList.add("show");
+
+    } else {
+
+        topBtn.classList.remove("show");
+
+    }
+
+});
+
+// =========================
+// SMOOTH SCROLL
+// =========================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+
+    anchor.addEventListener("click", function (e) {
+
+        const target = document.querySelector(this.getAttribute("href"));
+
+        if (target) {
+
+            e.preventDefault();
+
+            target.scrollIntoView({
+
+                behavior: "smooth"
 
             });
+
+        }
+
+    });
+
+});
+
+// =========================
+// ACTIVE NAV LINK
+// =========================
+
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll(".navbar ul li a");
+
+window.addEventListener("scroll", () => {
+
+    let current = "";
+
+    sections.forEach(section => {
+
+        const sectionTop = section.offsetTop - 120;
+        const sectionHeight = section.offsetHeight;
+
+        if (pageYOffset >= sectionTop) {
+
+            current = section.getAttribute("id");
+
+        }
+
+    });
+
+    navLinks.forEach(link => {
+
+        link.classList.remove("active");
+
+        if (link.getAttribute("href") === "#" + current) {
 
             link.classList.add("active");
 
@@ -131,142 +151,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // ===============================
-    // FADE-IN ANIMATION
-    // ===============================
+});
 
-    const animatedElements = document.querySelectorAll(
-        ".feature-card, .course-card, .testimonial-card, .gallery-item, .about-content, .about-image, .contact-form, .contact-info"
-    );
+// =========================
+// FADE-UP ANIMATION
+// =========================
 
-    const observer = new IntersectionObserver(function (entries) {
+const observer = new IntersectionObserver((entries) => {
 
-        entries.forEach(function (entry) {
+    entries.forEach(entry => {
 
-            if (entry.isIntersecting) {
+        if (entry.isIntersecting) {
 
-                entry.target.style.opacity = "1";
-                entry.target.style.transform = "translateY(0)";
-                observer.unobserve(entry.target);
-
-            }
-
-        });
-
-    }, {
-        threshold: 0.15
-    });
-
-    animatedElements.forEach(function (el) {
-
-        el.style.opacity = "0";
-        el.style.transform = "translateY(40px)";
-        el.style.transition = "all .8s ease";
-
-        observer.observe(el);
-
-    });
-
-    // ===============================
-    // BUTTON RIPPLE EFFECT
-    // ===============================
-
-    const buttons = document.querySelectorAll(".btn, .btn-outline, .read-btn, .apply-btn");
-
-    buttons.forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            button.style.transform = "scale(.95)";
-
-            setTimeout(function () {
-
-                button.style.transform = "";
-
-            }, 150);
-
-        });
-
-    });
-
-    // ===============================
-    // SCROLL TO TOP BUTTON
-    // ===============================
-
-    const topButton = document.createElement("button");
-
-    topButton.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-
-    topButton.className = "scrollTop";
-
-    document.body.appendChild(topButton);
-
-    topButton.style.position = "fixed";
-    topButton.style.bottom = "25px";
-    topButton.style.right = "25px";
-    topButton.style.width = "50px";
-    topButton.style.height = "50px";
-    topButton.style.border = "none";
-    topButton.style.borderRadius = "50%";
-    topButton.style.background = "#1E3A8A";
-    topButton.style.color = "#fff";
-    topButton.style.fontSize = "18px";
-    topButton.style.cursor = "pointer";
-    topButton.style.display = "none";
-    topButton.style.zIndex = "9999";
-    topButton.style.boxShadow = "0 8px 20px rgba(0,0,0,.25)";
-    topButton.style.transition = ".3s";
-
-    window.addEventListener("scroll", function () {
-
-        if (window.scrollY > 400) {
-
-            topButton.style.display = "block";
-
-        } else {
-
-            topButton.style.display = "none";
+            entry.target.classList.add("show");
 
         }
 
     });
 
-    topButton.addEventListener("mouseenter", function () {
+}, {
 
-        topButton.style.background = "#2563EB";
+    threshold: 0.2
 
-    });
+});
 
-    topButton.addEventListener("mouseleave", function () {
+document.querySelectorAll(".fade-up").forEach(element => {
 
-        topButton.style.background = "#1E3A8A";
-
-    });
-
-    topButton.addEventListener("click", function () {
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    });
-
-    // ===============================
-    // RESET MENU ON WINDOW RESIZE
-    // ===============================
-
-    window.addEventListener("resize", function () {
-
-        if (window.innerWidth > 991) {
-
-            navbar.classList.remove("active");
-
-            menuIcon.classList.remove("fa-times");
-            menuIcon.classList.add("fa-bars");
-
-        }
-
-    });
+    observer.observe(element);
 
 });
